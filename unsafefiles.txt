@@ -1,0 +1,1 @@
+.exe .jar .vbs .vb .sfx .bat .dll .tmp .msi .msp .com .gadget .jse .vbe .ps1 ps1xml .ps2 .ps2xml .psc1 .psc2 .lnk .inf .scf .pif .application .hta .cpl .msc .js .ws .wsf .wsc .wsh
