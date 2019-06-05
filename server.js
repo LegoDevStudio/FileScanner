@@ -84,7 +84,7 @@ function CheckUnsafeFile(string) {
 function isFileSafe(MessageAttachments) {
     let safe = true;
     MessageAttachments.array().forEach(Attachment => {
-        if(!CheckSafeFile(Attachment.filename)) {
+        if(CheckUnsafeFile(Attachment.filename)) {
             safe = false;
         }
     });
