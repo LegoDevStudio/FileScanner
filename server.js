@@ -64,18 +64,18 @@ Embeds.website.safe.setDescription("This URL seems fine. But may still contain m
 Embeds.website.bad.setTitle("URL DANGEROUS!");
 Embeds.website.bad.setColor("#ff0000");
 
-var SafeExtentions = fs.readFileSync("./safefiles.txt");
-console.log(SafeExtentions.toString());
-SafeExtentions = (SafeExtentions.toString()).split(" ");
+var UnsafeExtentions = fs.readFileSync("./unsafefiles.txt");
+console.log(UnsafeExtentions.toString());
+UnsafeExtentions = (UnsafeExtentions.toString()).split(" ");
 var SafeURLs = fs.readFileSync("./safeurls.txt");
 console.log(SafeURLs.toString());
 SafeURLs = (SafeURLs.toString()).split(" ");
 
-function CheckSafeFile(string) {
-    let safe = false
-    SafeExtentions.forEach(SafeExtention => {
-        if(string.toLowerCase().endsWith(SafeExtention)) {
-            safe = true;
+function CheckUnsafeFile(string) {
+    let unsafe = false;
+    UnsafeExtentions.forEach(UnsafeExtention => {
+        if(string.toLowerCase().endsWith(UnsafeExtention)) {
+            unsafe = true;
         }
     });
     return safe;
