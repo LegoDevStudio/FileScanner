@@ -90,11 +90,11 @@ function isFileSafe(MessageAttachments) {
     });
     return safe;
 }
-function isCDNSafe(string) {
-    let safe = false
-    SafeExtentions.forEach(SafeExtention => {
-        if(string.toLowerCase().endsWith(SafeExtention)) {
-            safe = true;
+function isCDNUnsafe(string) {
+    let safe = true
+    UnsafeExtentions.forEach(UnsafeExtention => {
+        if(string.toLowerCase().endsWith(UnsafeExtention)) {
+            safe = false;
         }
     });
     return safe;
@@ -163,7 +163,7 @@ Client.on("message", message => {
                 let rurl = url.split("?v=");
                 rurl = url.splice(url.length-1);
                 url = url.replace(rurl.join(""),"");
-                if(!isCDNSafe(url)){
+                if(isCDNUnsafe(url)){
                     message.delete();
                     message.channel.send(Embeds.website.check).then(m => {
                         VirusTotal.UrlEvaluation(url,function(data){
@@ -262,7 +262,7 @@ Client.on("messageUpdate", (old,message) => {
                 let rurl = url.split("?v=");
                 rurl = url.splice(url.length-1);
                 url = url.replace(rurl.join(""),"");
-                if(!isCDNSafe(url)){
+                if(isCDNUnsafe(url)){
                     message.delete();
                     message.channel.send(Embeds.website.check).then(m => {
                         VirusTotal.UrlEvaluation(url,function(data){
@@ -315,10 +315,10 @@ Client.on("messageUpdate", (old,message) => {
 Client.on("guildCreate", guild => {
     console.log("Joined: "+guild.name);
     if(guild.systemChannel == undefined){
-        guild.owner.send("Hello! I am FileScanner. I am designed to automatically remove unsafe files from your server.\nI work on a 4 strike system.\nStrike 1-2 = Warning\nStrike 3 = Mute for 10 minutes\nStrike 4 = Kick.");
+      //Was unable to find a system channel. Don't send anything.
     }else{
         guild.systemChannel.send("Hello! I am FileScanner. I am designed to automatically remove unsafe files from your server.\nI work on a 4 strike system.\nStrike 1-2 = Warning\nStrike 3 = Mute for 10 minutes\nStrike 4 = Kick.").catch(error => {
-            guild.owner.send("Hello! I am FileScanner. I am designed to automatically remove unsafe files from your server.\nI work on a 4 strike system.\nStrike 1-2 = Warning\nStrike 3 = Mute for 10 minutes\nStrike 4 = Kick.");
+          //Cannot talk in systemchannel. Don't send anything.
         });
     }
   if(!guild.roles.has("name","Muted")) {
@@ -328,9 +328,13 @@ Client.on("guildCreate", guild => {
       guild.channels.array().forEach(channel => {
         channel.overwritePermissions(role,{SEND_MESSAGES: false});
       })
-      guild.systemChannel.send("I didn't detect a Muted role on this server. I have created one for you.").catch(error => {
-        guild.owner.send("I didn't detect a Muted role on your server. I have created one for you.");
-      })
+      if(guild.systemChannel == undefined){
+        //Was unable to find a system channel. Don't send anything.
+      }else{
+        guild.systemChannel.send("I didn't detect a Muted role on this server. I have created one for you.").catch(error => {
+          //Cannot talk in systemchannel. Don't send anything.
+        })
+      }
     })
   }
 })
