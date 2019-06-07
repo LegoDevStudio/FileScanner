@@ -26,6 +26,7 @@ var VirusTotal = vt.MakePublicConnection();
 var Embed = Discord.RichEmbed;
 var Client = new Discord.Client();
 var fs = require("fs");
+var sa = require("superagent");
 var storage = {};
 
 var Embeds = {
@@ -71,6 +72,8 @@ var SafeURLs = fs.readFileSync("./safeurls.txt");
 console.log(SafeURLs.toString());
 SafeURLs = (SafeURLs.toString()).split(" ");
 
+var version = fs.readFileSync("./index.html").toString();
+
 function CheckUnsafeFile(string) {
     let unsafe = false;
     UnsafeExtentions.forEach(UnsafeExtention => {
@@ -111,7 +114,23 @@ function isURLSafe(string) {
 
 Client.on("ready", () => {
     console.log("FileScanner V1.0.0 is ready. Operating in "+Client.guilds.size+" guilds.");
-    Client.user.setActivity("for Files & URLs", {type:"WATCHING"});
+    Client.user.setActivity("for Files & URLs. Version: "+version, {type:"WATCHING"});
+    var alert = setInterval(() => {
+      sa.get("https://legodevstudio.github.io/FileScanner") 
+        .then(res => {
+          if(res.body.trim() != version) {
+            // Out of date!
+            Client.fetchApplication().then(bot => {
+              let embed = Embeds.website.bad;
+              embed.setTitle("Service Outdated");
+              embed.setDescription("**The bot is currently running an outdated instance.**\n*Please push an update asap!*");
+              bot.owner.send(embed);
+              clearInterval(alert);
+              
+            });
+          }
+        }
+    },60000);
 });
 Client.on("message", message => {
     if(message.author.bot) return;
